@@ -1,0 +1,59 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Lead {
+  id            String         @id @default(uuid())
+  name          String
+  email         String
+  phone         String
+  city          String
+  status        String         @default("NEW") // NEW, CONTACTED, QUALIFIED, CONVERTED, ARCHIVED
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  consultations Consultation[]
+}
+
+model Consultation {
+  id                  String        @id @default(uuid())
+  leadId              String
+  lead                Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  homeType            String?
+  spaces              String?       // JSON array string e.g. ["Living Room", "Master Bedroom"]
+  vibes               String?       // JSON array string e.g. ["Warm Minimalist", "Japandi"]
+  photos              String?       // JSON array string of photo URLs/base64 preview paths
+  notes               String?
+  amount              Float         @default(1999)
+  paymentStatus       String        @default("PENDING") // PENDING, PAID, FAILED
+  paymentId           String?
+  razorpayOrderId     String?
+  appointmentDate     String?
+  appointmentTimeSlot String?
+  status              String        @default("DRAFT") // DRAFT, SUBMITTED, PAID, BOOKED, COMPLETED
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  appointments        Appointment[]
+}
+
+model Appointment {
+  id             String       @id @default(uuid())
+  consultationId String
+  consultation   Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+  startTime      DateTime
+  endTime        DateTime
+  status         String       @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
+  googleEventId  String?
+  createdAt      DateTime     @default(now())
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
