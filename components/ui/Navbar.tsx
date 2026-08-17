@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, ArrowRight, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -15,48 +15,49 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-
-  // Hide main nav header on admin panel pages if desired, or keep simplified
   const isAdmin = pathname.startsWith("/admin");
 
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 glass-nav transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-        {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-serif text-xl sm:text-2xl font-medium tracking-tight text-earth">
-              Indian Minimalist
-            </span>
-            <span className="text-[10px] tracking-widest uppercase text-charcoal-muted font-sans font-medium">
-              Home Styling Studio
-            </span>
-          </div>
+    <header
+      className={`fixed left-0 right-0 top-0 z-50 pointer-events-none transition-all duration-500 ${
+        isScrolled ? "py-3" : "py-5"
+      }`}
+    >
+      <div className="pointer-events-auto mx-auto flex min-h-[52px] max-w-[920px] items-center justify-between rounded-full border border-ivory/10 bg-[#0c1512]/75 px-3 shadow-[0_18px_60px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:px-4">
+        <Link href="/" className="flex items-center gap-2 pl-2">
+          <span className="font-serif text-xl font-semibold leading-none tracking-normal text-ivory">
+            IM
+          </span>
+          <span className="hidden text-[8px] font-bold uppercase tracking-[0.42em] text-ivory/55 sm:block">
+            Studio
+          </span>
         </Link>
 
-        {/* Desktop Navigation */}
         {!isAdmin && (
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden items-center gap-6 md:flex">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-sm font-medium tracking-wide transition-colors relative py-1 ${
-                    isActive
-                      ? "text-primary font-semibold"
-                      : "text-earth/80 hover:text-primary"
+                  className={`relative py-1 text-[11px] font-semibold uppercase tracking-[0.16em] transition-colors ${
+                    isActive ? "text-ivory" : "text-ivory/62 hover:text-ivory"
                   }`}
                 >
                   {link.name}
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-full" />
+                    <span className="absolute bottom-0 left-0 h-px w-full rounded-full bg-[#00b8ac]" />
                   )}
                 </Link>
               );
@@ -64,47 +65,43 @@ export default function Navbar() {
           </nav>
         )}
 
-        {/* Right CTA */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden items-center gap-3 md:flex">
           <Link
             href="/admin"
-            className="text-xs uppercase tracking-wider font-semibold text-charcoal-muted hover:text-earth transition-colors px-3 py-2"
+            className="px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-ivory/50 transition-colors hover:text-ivory"
           >
-            Admin Portal
+            Admin
           </Link>
           <Link
             href="/book"
-            className="inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all shadow-sm hover:shadow-md"
+            className="inline-flex min-h-[34px] items-center rounded-full bg-[#007d75] px-5 text-[11px] font-semibold uppercase tracking-widest text-ivory transition-colors hover:bg-[#00978d]"
           >
-            <span>Book Consultation</span>
-            <ArrowRight className="w-4 h-4" />
+            Book
           </Link>
         </div>
 
-        {/* Mobile Hamburger Button */}
         <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-earth hover:text-primary focus:outline-none"
-          aria-label="Toggle Menu"
+          onClick={() => setMobileMenuOpen((open) => !open)}
+          className="p-2 text-ivory md:hidden"
+          aria-label="Toggle menu"
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
-      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden glass-card border-b border-earth/10 px-6 pt-4 pb-6 space-y-4">
+        <div className="pointer-events-auto mx-3 mt-3 rounded-3xl border border-ivory/10 bg-[#0c1512]/95 px-6 pb-8 pt-6 shadow-elevated backdrop-blur-xl md:hidden">
           {!isAdmin && (
-            <div className="flex flex-col space-y-3">
+            <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`text-base font-medium transition-colors py-1 ${
+                  className={`py-1 text-sm uppercase tracking-widest transition-colors ${
                     pathname === link.href
-                      ? "text-primary font-semibold"
-                      : "text-earth hover:text-primary"
+                      ? "font-bold text-ivory"
+                      : "text-ivory/65 hover:text-ivory"
                   }`}
                 >
                   {link.name}
@@ -112,21 +109,20 @@ export default function Navbar() {
               ))}
             </div>
           )}
-          <div className="pt-3 border-t border-earth/10 flex flex-col gap-3">
+          <div className="mt-6 flex flex-col gap-4 border-t border-ivory/10 pt-5">
             <Link
               href="/admin"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-sm font-medium text-charcoal-muted hover:text-earth py-1"
+              className="text-xs font-medium uppercase tracking-widest text-ivory/55"
             >
               Admin Portal
             </Link>
             <Link
               href="/book"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full inline-flex justify-center items-center gap-2 bg-primary text-white py-3 rounded-full text-sm font-medium"
+              className="inline-flex w-full items-center justify-center rounded-full bg-[#007d75] py-3.5 text-xs font-semibold uppercase tracking-widest text-ivory"
             >
-              <span>Book Consultation</span>
-              <ArrowRight className="w-4 h-4" />
+              Book Styling Call
             </Link>
           </div>
         </div>

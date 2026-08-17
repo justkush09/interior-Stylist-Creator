@@ -1,43 +1,103 @@
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
+model Customer {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  phone         String
+  name          String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  leads         Lead[]
+  consultations Consultation[]
+}
+
 model Lead {
   id            String         @id @default(uuid())
+  customerId    String?
+  customer      Customer?      @relation(fields: [customerId], references: [id], onDelete: SetNull)
   name          String
   email         String
   phone         String
   city          String
-  status        String         @default("NEW") // NEW, CONTACTED, QUALIFIED, CONVERTED, ARCHIVED
+  source        String?        @default("DIRECT")
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+  status        String         @default("NEW") // NEW, CONTACTED, FOLLOW_UP, CONVERTED, CLOSED
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   consultations Consultation[]
 }
 
 model Consultation {
-  id                  String        @id @default(uuid())
-  leadId              String
-  lead                Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  id                  String               @id @default(uuid())
+  leadId              String?
+  lead                Lead?                @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  customerId          String?
+  customer            Customer?            @relation(fields: [customerId], references: [id], onDelete: SetNull)
   homeType            String?
-  spaces              String?       // JSON array string e.g. ["Living Room", "Master Bedroom"]
-  vibes               String?       // JSON array string e.g. ["Warm Minimalist", "Japandi"]
-  photos              String?       // JSON array string of photo URLs/base64 preview paths
+  budget              String?
+  spaces              String?              // JSON array string e.g. ["Living Room"]
+  vibes               String?              // JSON array string e.g. ["Japandi"]
+  photos              String?              // Legacy/JSON array string
   notes               String?
-  amount              Float         @default(1999)
-  paymentStatus       String        @default("PENDING") // PENDING, PAID, FAILED
+  amount              Float                @default(1999)
+  paymentStatus       String               @default("PAYMENT_PENDING") // PAYMENT_PENDING, PAID, SCHEDULING_PENDING, SCHEDULED, COMPLETED, CANCELLED
   paymentId           String?
   razorpayOrderId     String?
   appointmentDate     String?
   appointmentTimeSlot String?
-  status              String        @default("DRAFT") // DRAFT, SUBMITTED, PAID, BOOKED, COMPLETED
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+  status              String               @default("DRAFT") // DRAFT, SUBMITTED, PAYMENT_PENDING, PAID, SCHEDULING_PENDING, SCHEDULED, COMPLETED
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  answers             ConsultationAnswer[]
+  images              UploadedImage[]
+  payments            Payment[]
   appointments        Appointment[]
+}
+
+model ConsultationAnswer {
+  id             String       @id @default(uuid())
+  consultationId String
+  consultation   Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+  questionKey    String
+  questionLabel  String
+  answerValue    String
+  createdAt      DateTime     @default(now())
+}
+
+model UploadedImage {
+  id             String       @id @default(uuid())
+  consultationId String
+  consultation   Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+  spaceCategory  String?
+  filePath       String
+  originalName   String?
+  mimeType       String?
+  sizeBytes      Int?
+  createdAt      DateTime     @default(now())
+}
+
+model Payment {
+  id             String       @id @default(uuid())
+  consultationId String
+  consultation   Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+  orderId        String
+  paymentId      String?      @unique
+  signature      String?
+  amount         Float
+  currency       String       @default("INR")
+  status         String       @default("PENDING") // PENDING, PAID, FAILED
+  rawPayload     String?      // Stored JSON webhook payload
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model Appointment {
@@ -46,9 +106,33 @@ model Appointment {
   consultation   Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
   startTime      DateTime
   endTime        DateTime
+  timezone       String       @default("Asia/Kolkata")
   status         String       @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
   googleEventId  String?
+  meetLink       String?
   createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Notification {
+  id           String   @id @default(uuid())
+  type         String   // LEAD_RECEIVED, PAYMENT_SUCCESS, APPOINTMENT_BOOKED, ADMIN_ALERT
+  channel      String   // EMAIL, WHATSAPP
+  recipient    String
+  template     String
+  status       String   @default("SENT") // SENT, FAILED
+  errorMessage String?
+  metadata     String?  // JSON string
+  createdAt    DateTime @default(now())
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(uuid())
+  eventType String   // page_view, consultation_started, lead_submitted, etc.
+  sessionId String?
+  urlPath   String?
+  metadata  String?  // JSON string
+  createdAt DateTime @default(now())
 }
 
 model Setting {

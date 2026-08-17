@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, X, Sparkles, MapPin } from "lucide-react";
+import { ArrowUpRight, X, Sparkles, MapPin } from "lucide-react";
 
 interface PortfolioItem {
   id: number;
@@ -83,25 +83,30 @@ export default function PortfolioPage() {
       : allProjects.filter((p) => p.category === selectedCategory);
 
   return (
-    <div className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
+    <div className="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <span className="text-xs font-semibold uppercase tracking-widest text-primary">Inspiration Gallery</span>
-        <h1 className="font-serif text-4xl sm:text-5xl font-medium text-earth">Our Portfolio of Transformed Spaces</h1>
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-forest/5 border border-forest/10 text-copper text-xs font-semibold uppercase tracking-[0.2em]">
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Architectural Portfolio</span>
+        </div>
+        <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal text-forest tracking-tight">
+          Selected Realized Spaces
+        </h1>
         <p className="text-base sm:text-lg text-charcoal-muted font-light leading-relaxed">
-          Browse real homes across Bengaluru, Mumbai, and Hyderabad styled with Indian Minimalist principles.
+          Browse authentic Indian minimalist interiors styled across Bengaluru, Mumbai, and Hyderabad.
         </p>
       </div>
 
-      {/* Category Tabs */}
-      <div className="flex flex-wrap justify-center gap-2">
+      {/* Category Filter Pills */}
+      <div className="flex flex-wrap justify-center gap-2.5">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+            className={`px-5 py-2.5 rounded-full text-xs uppercase tracking-widest font-semibold transition-all ${
               selectedCategory === cat
-                ? "bg-earth text-white shadow-md"
-                : "bg-surface text-charcoal-muted hover:bg-earth/10"
+                ? "bg-forest text-ivory shadow-md"
+                : "bg-surface text-charcoal-muted hover:bg-forest/10"
             }`}
           >
             {cat}
@@ -109,15 +114,15 @@ export default function PortfolioPage() {
         ))}
       </div>
 
-      {/* Grid */}
+      {/* Project Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filtered.map((item) => (
           <div
             key={item.id}
             onClick={() => setSelectedModalItem(item)}
-            className="group cursor-pointer rounded-3xl overflow-hidden bg-white border border-earth/10 shadow-soft hover:shadow-elevated transition-all flex flex-col justify-between"
+            className="group cursor-pointer rounded-3xl overflow-hidden bg-card border border-forest/10 shadow-soft hover:shadow-elevated transition-all duration-500 flex flex-col justify-between"
           >
-            <div className="relative h-72 overflow-hidden">
+            <div className="relative h-72 overflow-hidden bg-surface">
               <img
                 src={item.image}
                 alt={item.title}
@@ -125,19 +130,19 @@ export default function PortfolioPage() {
               />
               <div className="absolute top-4 left-4 flex gap-1.5 flex-wrap">
                 {item.tags.map((tag) => (
-                  <span key={tag} className="bg-white/90 backdrop-blur-md px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wider text-earth uppercase">
+                  <span key={tag} className="bg-charcoal/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] uppercase tracking-wider text-ivory font-semibold">
                     {tag}
                   </span>
                 ))}
               </div>
             </div>
 
-            <div className="p-6 space-y-2">
-              <div className="flex items-center gap-1 text-xs text-primary font-medium">
+            <div className="p-6 space-y-2.5">
+              <div className="flex items-center gap-1.5 text-xs text-copper font-medium">
                 <MapPin className="w-3.5 h-3.5" />
                 <span>{item.location}</span>
               </div>
-              <h3 className="font-serif text-xl font-medium text-earth group-hover:text-primary transition-colors">
+              <h3 className="font-serif text-xl font-medium text-forest group-hover:text-copper transition-colors">
                 {item.title}
               </h3>
               <p className="text-xs text-charcoal-muted font-light line-clamp-2">{item.description}</p>
@@ -146,13 +151,13 @@ export default function PortfolioPage() {
         ))}
       </div>
 
-      {/* Lightbox Modal */}
+      {/* Modal */}
       {selectedModalItem && (
-        <div className="fixed inset-0 z-50 bg-earth/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl overflow-hidden max-w-3xl w-full shadow-elevated relative animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-50 bg-forest/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-ivory rounded-3xl overflow-hidden max-w-3xl w-full shadow-elevated relative border border-ivory/20">
             <button
               onClick={() => setSelectedModalItem(null)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-earth/60 hover:bg-earth text-white flex items-center justify-center transition-colors"
+              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-forest/80 hover:bg-forest text-ivory flex items-center justify-center transition-colors shadow-md"
             >
               <X className="w-5 h-5" />
             </button>
@@ -166,20 +171,20 @@ export default function PortfolioPage() {
             </div>
 
             <div className="p-8 space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
+              <div className="flex items-center gap-3">
+                <span className="bg-copper/10 text-copper px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
                   {selectedModalItem.category}
                 </span>
-                <span className="text-xs text-charcoal-muted">{selectedModalItem.location}</span>
+                <span className="text-xs text-charcoal-muted font-medium">{selectedModalItem.location}</span>
               </div>
 
-              <h2 className="font-serif text-2xl font-medium text-earth">{selectedModalItem.title}</h2>
+              <h2 className="font-serif text-3xl font-medium text-forest">{selectedModalItem.title}</h2>
               <p className="text-sm text-charcoal-muted leading-relaxed font-light">{selectedModalItem.description}</p>
 
-              <div className="pt-4 border-t border-earth/10 flex items-center justify-between">
+              <div className="pt-4 border-t border-forest/10 flex items-center justify-between">
                 <div className="flex gap-2">
                   {selectedModalItem.tags.map((t) => (
-                    <span key={t} className="text-xs bg-surface text-earth px-3 py-1 rounded-full font-medium">
+                    <span key={t} className="text-xs bg-surface text-forest px-3 py-1 rounded-full font-medium">
                       #{t}
                     </span>
                   ))}
@@ -187,10 +192,10 @@ export default function PortfolioPage() {
 
                 <Link
                   href="/book"
-                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-full text-xs font-medium transition-colors"
+                  className="inline-flex items-center gap-2 bg-forest hover:bg-forest-rich text-ivory px-6 py-3 rounded-full text-xs uppercase tracking-widest font-semibold transition-colors"
                 >
                   <span>Style Similar Space</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowUpRight className="w-4 h-4 text-copper-soft" />
                 </Link>
               </div>
             </div>
