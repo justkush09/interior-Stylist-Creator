@@ -9,41 +9,70 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#FBF9F5", // Warm Ivory
-        surface: "#F2ECE4",    // Muted Sand
-        card: "#FFFFFF",       // Pure White
-        primary: {
-          DEFAULT: "#C86D51", // Terracotta Accent
-          dark: "#A8533B",
-          light: "#E89B83",
+        background: "#FAF6F0", // Soft Cream & Warm Sand
+        surface: {
+          DEFAULT: "#F4ECE1", // Warm Natural Surface
+          dark: "#1B3B2B",    // Botanical Forest Accent Surface
+          charcoal: "#2C2E2B",// Earthy Soft Charcoal
         },
-        earth: {
-          DEFAULT: "#2C3E35", // Deep Forest Earth
-          muted: "#4A5D53",
+        card: "#FFFFFF",
+        primary: {
+          DEFAULT: "#B85D36", // Warm Terracotta Clay (Primary Brand Color)
+          dark: "#9E4A28",
+          light: "#D87A52",
+        },
+        terracotta: {
+          DEFAULT: "#B85D36", // Warm Terracotta
+          dark: "#9E4A28",
+          soft: "#E89B79",
+        },
+        copper: {
+          DEFAULT: "#B85D36", // Terracotta Copper
+          dark: "#9E4A28",
+          soft: "#E89B79",
+        },
+        forest: {
+          DEFAULT: "#1B3B2B", // Botanical Deep Forest
+          rich: "#142E21",
+          light: "#28523C",
+          accent: "#376B50",
+        },
+        teak: {
+          DEFAULT: "#4A3525", // Solid Teakwood
+          dark: "#332317",
+          light: "#6E503B",
         },
         charcoal: {
-          DEFAULT: "#1F1F1F", // Soft Charcoal
-          muted: "#666666",
-          light: "#999999",
+          DEFAULT: "#2C2E2B", // Earthy Charcoal
+          rich: "#1F211E",
+          muted: "#636660",
+          light: "#A3A7A0",
+        },
+        ivory: {
+          DEFAULT: "#FAF6F0",
+          warm: "#F2E8DB",
+          sand: "#E5D7C4",
         },
         gold: {
-          DEFAULT: "#D4AF37", // Warm Muted Gold
-          soft: "#F4E8C1",
+          DEFAULT: "#C69C4E", // Natural Brass / Ochre Accent
+          soft: "#E6C98A",
+          dark: "#997531",
         }
       },
       fontFamily: {
-        serif: ["var(--font-serif)", "Playfair Display", "Georgia", "serif"],
+        serif: ["var(--font-serif)", "Cormorant Garamond", "Playfair Display", "Georgia", "serif"],
         sans: ["var(--font-sans)", "Plus Jakarta Sans", "Inter", "sans-serif"],
       },
       boxShadow: {
-        'soft': '0 10px 30px -10px rgba(44, 62, 53, 0.08)',
-        'elevated': '0 20px 40px -15px rgba(31, 31, 31, 0.12)',
-        'inner-soft': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.04)',
+        'soft': '0 10px 40px -10px rgba(44, 46, 43, 0.06)',
+        'elevated': '0 20px 50px -15px rgba(44, 46, 43, 0.12)',
+        'glow-terracotta': '0 0 30px rgba(184, 93, 54, 0.25)',
+        'glow-green': '0 0 40px rgba(27, 59, 43, 0.25)',
       },
       borderRadius: {
         '2xl': '1rem',
         '3xl': '1.5rem',
-        '4xl': '2rem',
+        '4xl': '2.5rem',
       }
     },
   },
